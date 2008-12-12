@@ -1,3 +1,14 @@
+gpt (1.0.3-1) unstable; urgency=low
+
+  * New Upstream Version
+    - Fixed FTBFS (Closes: #505423)
+  * Added ${misc:Depends} in libgportugol0 and libgportugol-dev
+    binary packages as dependency
+  * Changed Vcs field in debian/control to debian package Vcs
+    in my account at git.debian.org
+
+ -- Marcelo Jorge Vieira (metal) <metal@alucinados.com>  Thu, 11 Dec 2008 17:52:12 -0200
+
 gpt (1.0.2-1) unstable; urgency=high
 
   * New upstream version
