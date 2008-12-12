@@ -19,7 +19,7 @@ Description: G-Portugol is a portuguese structured programming language
 Package: libgportugol-dev
 Section: libdevel
 Architecture: any
-Depends: libgportugol0 (= ${binary:Version}), antlr, libantlr-dev, libpcre3-dev
+Depends: ${misc:Depends}, libgportugol0 (= ${binary:Version}), antlr, libantlr-dev, libpcre3-dev
 Description: Development files for the G-Portugol library
  G-Portugol is a portuguese structured programming language, based on the
  popular, freeform, pseudocode known as portugol. The compiler features
@@ -28,7 +28,7 @@ Description: Development files for the G-Portugol library
 Package: libgportugol0
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: G-Portugol library
  G-Portugol is a portuguese structured programming language, based on the
  popular, freeform, pseudocode known as portugol. The compiler features
