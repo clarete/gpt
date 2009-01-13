@@ -1,3 +1,10 @@
+gpt (1.0.4-1) unstable; urgency=low
+
+  * New Upstream Version
+    - Fixed reopened FTBFS (Closes: #505423)
+
+ -- Marcelo Jorge Vieira (metal) <metal@alucinados.com>  Tue, 13 Jan 2009 17:06:17 -0200
+
 gpt (1.0.3-2) unstable; urgency=high
 
   * Fixed FTBFS if pccts is installed (Closes: 508832)
