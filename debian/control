@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Marcelo Jorge Vieira (metal) <metal@debian.org>
 Build-Depends: cdbs, debhelper (>= 7), autotools-dev, antlr, libantlr-dev, libpcre3-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.8.4
 Homepage: http://gpt.berlios.de
 Vcs-Git: git://git.debian.org/git/users/metal-guest/gpt.git
 Vcs-Browser: http://git.debian.org/?p=users/metal-guest/gpt.git;a=summary
