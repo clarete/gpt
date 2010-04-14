@@ -2,8 +2,22 @@
 
 export ANTLR_BIN=/usr/bin/runantlr
 
+LOCALE_PATH=`pwd`/debian/tmpdir/usr/lib/locale
+LOCALE_NAME=en_US
+LOCALE_CHARSET=UTF-8
+
 %:
 	dh $@
 
 override_dh_auto_configure:
 	dh_auto_configure -- --with-antlr=/usr/share/antlr --enable-install-devel
+
+override_dh_auto_build:
+	mkdir -p $(LOCALE_PATH)
+	localedef -i $(LOCALE_NAME) -f $(LOCALE_CHARSET) $(LOCALE_PATH)/$(LOCALE_NAME).$(LOCALE_CHARSET)
+	LOCPATH=$(LOCALE_PATH) LC_ALL=$(LOCALE_NAME).$(LOCALE_CHARSET) LANG=$(LOCALE_NAME).$(LOCALE_CHARSET) \
+	dh_auto_build
+
+override_dh_auto_clean:
+	rm -rf debian/tmpdir
+	dh_auto_clean
