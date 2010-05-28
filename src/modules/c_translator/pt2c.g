@@ -159,6 +159,7 @@ options {
          "   int *d;\n"
          "   double* f;\n"
          "   char* c;\n"
+         "   char** s;\n"
          "   boolean* b;\n"          
          "   switch(type) {\n"
          "     case 'i':\n"
@@ -172,6 +173,10 @@ options {
          "     case 'c':\n"
          "       c = (char*) matrix;\n"
          "       for(i = 0; i < size; i++) c[i] = 0;\n"
+         "       break;\n"
+         "     case 's':\n"
+         "       s = (char**) matrix;\n"
+         "       for(i = 0; i < size; i++) s[i] = 0;\n"
          "       break;\n"
          "     case 'b':\n"
          "       b = (boolean*) matrix;\n"
@@ -266,7 +271,19 @@ options {
          "   }\n"
          "   return TRUE;\n"
          "}\n";
+    s << "int str_strlen(char* str) {\n"
+         "   if(str == 0) {\n"
+         "     return 0;\n"
+         "   }\n"
+         "   return strlen(str);\n"
+         "}\n";     
     s << "boolean str_comp(char* left, char* right) {\n"
+         "   if (!left && !right) {\n"
+         "      return TRUE;\n"
+         "   }\n"
+         "   if (!left || !right) {\n"
+         "      return FALSE;\n"
+         "   }\n"
          "   if(str_strlen(left) != str_strlen(right)) {\n"
          "     return FALSE;\n"
          "   }\n"
@@ -274,12 +291,6 @@ options {
          "     return TRUE;\n"
          "   }\n"
          "   return (strcmp(left, right)==0);\n"
-         "}\n";
-    s << "int str_strlen(char* str) {\n"
-         "   if(str == 0) {\n"
-         "     return 0;\n"
-         "   }\n"
-         "   return strlen(str);\n"
          "}\n";
     s << "char* return_literal(char* str) {\n"
          "  char* lit = NULL;\n"
@@ -507,8 +518,9 @@ variaveis
                   case TIPO_REAL:
                     init << "'f', ";break;
                   case TIPO_CARACTERE:
+                    init << "'c', ";break;
                   case TIPO_LITERAL:
-                    init << "'c', ";break;      
+                    init << "'s', ";break;      
                   case TIPO_LOGICO:
                     init << "'b', ";break;
                 }
@@ -627,6 +639,7 @@ stm
   | stm_ret
   | stm_se
   | stm_enquanto
+  | stm_repita
   | stm_para
   ;
 
@@ -693,9 +706,16 @@ fcall[int expct_type] returns [production p] //id, list<dimexpr>
 
 stm_ret
 {
-  int expecting_type = stable.getSymbol(SymbolTable::GlobalScope, _currentScope, true).type.primitiveType();
+  int expecting_type=TIPO_NULO;
+  bool isGlobalEscope = _currentScope==SymbolTable::GlobalScope;
+  if (isGlobalEscope){
+    expecting_type = TIPO_INTEIRO; // o retorno no bloco principal é do TIPO_INTEIRO
+  }else{
+    expecting_type = stable.getSymbol(SymbolTable::GlobalScope, _currentScope, true).type.primitiveType();
+  }
+  
   production e;
-  stringstream str;
+  stringstream str; 
 }
   : #(T_KW_RETORNE (TI_NULL|e=expr[expecting_type]))
     {
@@ -713,7 +733,7 @@ stm_ret
 stm_se
 {
   production e;
-  stringstream str;
+  stringstream str; 
 }
   : #(T_KW_SE e=expr[TIPO_LOGICO]
         {
@@ -759,6 +779,28 @@ stm_enquanto
       {
         unindent();
         writeln("}");
+      }
+    )
+  ;
+
+stm_repita
+{
+  production e;
+  stringstream str;
+}
+  :#(T_KW_REPITA
+      {
+        str << "do{";
+        writeln(str);
+        indent();
+      }
+      (stm)*
+      e=expr[TIPO_LOGICO]
+      {
+        unindent();
+        str.str(""); 
+        str << "}while (! "  << e.expr.second << ");";
+        writeln(str);
       }
     )
   ;
@@ -931,7 +973,7 @@ func_decls
                   case TIPO_CARACTERE:
                     cpy << "'c', ";break;
                   case TIPO_LITERAL:
-                    cpy << "'s', ";break;      
+                    cpy << "'s', ";break;
                   case TIPO_LOGICO:
                     cpy << "'b', ";break;
                 }

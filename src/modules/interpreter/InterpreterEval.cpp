@@ -767,6 +767,10 @@ ExprValue InterpreterEval::getReturnExprValue(const string& fname) {
   return retExpr;
 }
 
+int InterpreterEval::getReturning(){
+  return atoi(retExpr.value.c_str());
+}
+
 //----------- Debugger -------------------------
 
 void InterpreterEval::nextCmd(const string& file, int line) {
@@ -845,13 +849,17 @@ void InterpreterEval::executeImprima(list<ExprValue>& args) {
         break;
       case TIPO_LOGICO:
         if(atoi((*it).value.c_str())) {
-          s << "verdadeiro";
+          cout << "verdadeiro";
         } else {
-          s << "falso";
+          cout << "falso";
         }
         break;
       case TIPO_LITERAL:
-        cout << (*it).value;
+      	if(!(*it).value.empty()) {	
+          cout << (*it).value.c_str();
+        } else {
+          cout << "(nulo)";
+        }
         break;
       default:
         cout << (*it).value;
