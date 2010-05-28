@@ -149,7 +149,10 @@ tipo_matriz returns [pair<int, list<string> > p] //pair<type, list<dimsize> >
 
 principal
   : stm_block
-    {x86.writeExit();}
+    {
+            x86.writeTEXT("mov ecx, 0");
+            x86.writeExit();
+    }
   ;
 
 stm_block
@@ -162,6 +165,7 @@ stm
   | stm_ret
   | stm_se
   | stm_enquanto
+  | stm_repita
   | stm_para
   ;
 
@@ -331,22 +335,34 @@ fcall[int expct_type] returns [int type]
 
 stm_ret
 {
-  int expecting_type = stable.getSymbol(SymbolTable::GlobalScope, x86.currentScope(), true).type.primitiveType();
+  int expecting_type=TIPO_NULO;
   int etype;
+  bool isGlobalEscope = (x86.currentScope()==SymbolTable::GlobalScope);
+  if (isGlobalEscope){
+    expecting_type = TIPO_INTEIRO; // o retorno no bloco principal é do TIPO_INTEIRO
+  }else{
+    expecting_type = stable.getSymbol(SymbolTable::GlobalScope, x86.currentScope(), true).type.primitiveType();
+  }  
 }
   : #(T_KW_RETORNE (TI_NULL|etype=expr[expecting_type]))
     {
-      if(expecting_type != TIPO_NULO) {
-        x86.writeTEXT("pop eax");
-      }
-      if(expecting_type == TIPO_LITERAL) {
-        x86.writeTEXT("addarg eax");
-        x86.writeTEXT("call clone_literal");
-        x86.writeTEXT("clargs 1");
+      if (isGlobalEscope){
+        x86.writeTEXT("pop ecx");
+        x86.writeExit();
       } else {
-        x86.writeCast(etype, expecting_type);
+      	if(expecting_type != TIPO_NULO) {
+        	x86.writeTEXT("pop eax");
+      	}
+      	if(expecting_type == TIPO_LITERAL) {
+        	x86.writeTEXT("addarg eax");
+        	x86.writeTEXT("call clone_literal");
+        	x86.writeTEXT("clargs 1");
+      	} else {
+        	x86.writeCast(etype, expecting_type);
+      	}
+      
+      	x86.writeTEXT("return");
       }
-      x86.writeTEXT("return");
     }
   ;
 
@@ -415,7 +431,7 @@ stm_enquanto
   string lbfim = x86.createLabel(true, "fim_enquanto");;
 
   s << lbenq << ":";
-  x86.writeTEXT(lbenq);
+  x86.writeTEXT(s.str());
   s.str("");
 
   x86.writeTEXT("; while: expressao");
@@ -441,6 +457,35 @@ stm_enquanto
       }
     )
   ;
+
+stm_repita
+{
+  stringstream s;
+  string lbrep = x86.createLabel(true, "repita");;
+  string lbfim = x86.createLabel(true, "ate");;
+
+  s << lbrep << ":";
+  x86.writeTEXT(s.str());
+  s.str("");
+
+  x86.writeTEXT("; repita");
+}
+  : #(T_KW_REPITA 
+       (stm)*
+      {
+       x86.writeTEXT("; until expressao");
+      }
+       expr[TIPO_LOGICO]
+      {
+        x86.writeTEXT("; until resultado");
+        x86.writeTEXT("pop eax");
+        x86.writeTEXT("cmp eax, 0");
+        s << "je near " << lbrep;
+        x86.writeTEXT(s.str());
+      }
+    )
+  ;
+
 
 stm_para
 {

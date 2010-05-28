@@ -143,8 +143,9 @@ options {
   )
 
 */
-algoritmo
+algoritmo returns [int ret]
 {
+  ret = 0;
   topnode = _t;
   interpreter.init(_t->getFilename());  
   _t = _t->getNextSibling();
@@ -153,6 +154,11 @@ algoritmo
   }
 }
   : inicio    
+    {
+      if (_returning){
+        ret = interpreter.getReturning();
+      }
+    }
   ;
 
 inicio
@@ -180,6 +186,7 @@ stm
   | stm_ret
   | stm_se
   | stm_enquanto
+  | stm_repita
   | stm_para
   ;
 
@@ -297,7 +304,28 @@ stm_enquanto
           exec = expr(exprNode).ifTrue();
           stmNode = first_stm;
         }
-        _t = _retTree;
+      }
+    )
+  ;
+
+stm_repita
+{
+  ExprValue e;
+  bool exec;
+  RefPortugolAST exprNode, first_stm, stmNode;
+}
+  : #(rep:T_KW_REPITA
+      {
+        stmNode = first_stm = _t;
+        do{
+          while(stmNode->getNextSibling() != antlr::nullAST) {
+            stm(stmNode);
+		        stmNode = stmNode->getNextSibling();
+		      }
+          exprNode = stmNode;
+		      exec = expr(exprNode).ifTrue();
+		      stmNode = first_stm;
+        }while(!exec);
       }
     )
   ;
@@ -345,7 +373,6 @@ stm_para
           //lv deve ter um valor a mais do que até (ou a menos, se loop decrescente).
           //setar o valor de lv para valor de ate
           interpreter.execAttribution(lv, ate);
-          _t = _retTree;
         }
     )
   ;

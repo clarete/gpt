@@ -81,6 +81,7 @@ tokens {
   T_KW_DE="de";
   T_KW_ATE="até";
   T_KW_FIM_PARA="fim-para";
+  T_KW_REPITA="repita";
   T_KW_MATRIZ="matriz";
   T_KW_INTEIROS="inteiros";
   T_KW_REAIS="reais";
@@ -500,7 +501,7 @@ catch[antlr::RecognitionException] {
   matched token. if there is, we check for the tokens on tokens{} secion.
   if is a match, we don't do anything, and let the testLiterals do its work.
   Else, it means we have something like "a-b". So we need to rewind to
-  "a", right before the match of '-', synchorinize the current matched text
+  "a", right before the match of '-', synchronize the current matched text
   (wich now is "a-b") to "a", and let it roll again (wich will dispatch
   a token T_IDENTIFIER with text "a", and start again from '-' point).
 */

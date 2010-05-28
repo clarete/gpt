@@ -186,6 +186,7 @@ void X86::init(const string& name) {
             "    aux2            dd 0\n"
             "    str_true        db 'verdadeiro',0\n"
             "    str_false       db 'falso',0\n"
+            "    str_null        db '(nulo)',0\n"
             "    str_no_mem_left db 'Não foi possível alocar memória.',0\n\n";
 
 
@@ -220,7 +221,9 @@ string X86::currentScope() {
 }
 
 void X86::writeExit() {
-  writeTEXT("exit 0");
+  stringstream s;
+  s << "exit ecx";
+  writeTEXT(s.str());
 }
 
 void X86::declarePrimitive(int decl_type, const string& name, int type) {
@@ -302,7 +305,11 @@ string X86::toNasmString(string str) {
           ret += str[i];
       }
     } else {
-      ret += str[i];
+      if(str[i] == '\'') {
+        ret += "',39,'";
+      } else {
+        ret += str[i];
+      }
     }
   }
   return ret;
@@ -1023,14 +1030,20 @@ string X86::toChar(const string& str) {
   }
 }
 
+//extrai os bytes que representam um número em ponto flutuante
+//e devolve o inteiro como string
 string X86::toReal(const string& str) {
+  float fvalue = (float) atof(str.c_str());
+  unsigned char *cp = (unsigned char*) &fvalue;
+
+  int i = cp[0]
+    + (cp[1] << 8) 
+    + (cp[2] << 16) 
+    + (cp[3] << 24);
+
   stringstream s;
-  //get the content of a float variable to integer.
-  float fvalue; //sizeof(float) should be 4
-  long  *fvaluep; //sizeof(long) should be 4
-  fvalue = atof(str.c_str());
-  fvaluep = (long*) &fvalue;
-  s << *fvaluep;
+  s << i;
+
   return s.str();
 }
 
