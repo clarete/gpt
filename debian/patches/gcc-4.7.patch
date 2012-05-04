@@ -1,0 +1,27 @@
+Description: add missing includes to avoid FTBFS with gcc 4.7
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/667191
+Forwarded: no
+Author: gregor herrmann <gregoa@debian.org>
+Last-Update: 2012-05-04
+
+--- gpt.orig/src/GPT.cpp	2010-05-28 10:26:21.000000000 -0300
++++ gpt/src/GPT.cpp	2012-05-04 14:22:13.000000000 -0300
+@@ -37,6 +37,7 @@
+ #include <fstream>
+ #include <sstream>
+ #include <iostream>
++#include <unistd.h>
+ 
+ GPT* GPT::_self = 0;
+ 
+--- gpt.orig/src/modules/interpreter/InterpreterDBG.cpp	2012-05-04 14:21:33.000000000 -0300
++++ gpt/src/modules/interpreter/InterpreterDBG.cpp	2012-05-04 14:22:48.000000000 -0300
+@@ -34,6 +34,7 @@
+ #endif
+ 
+ #include <pcrecpp.h>
++#include <unistd.h>
+ 
+ #ifndef WIN32
+   void sigPipeHandler(int signum) {
