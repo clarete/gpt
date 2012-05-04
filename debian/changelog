@@ -1,3 +1,11 @@
+gpt (1.1-2) unstable; urgency=low
+
+  * Fixed FTBFS with GCC-4.7 (Closes: #667191); Thanks Gregor Herrmann
+  * Updated Standards-Version to 3.9.3
+    + Machine-readable debian/copyright version 1.0
+
+ -- Marcelo Jorge Vieira (metal) <metal@debian.org>  Fri, 04 May 2012 14:41:36 -0300
+
 gpt (1.1-1) unstable; urgency=low
 
   * New Upstream release
