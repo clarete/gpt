@@ -2,7 +2,9 @@
 
 export ANTLR_BIN=/usr/bin/runantlr
 
-LOCALE_PATH=`pwd`/debian/tmpdir/usr/lib/locale
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+LOCALE_PATH=`pwd`/debian/tmpdir/usr/lib/$(DEB_HOST_MULTIARCH)/locale
 LOCALE_NAME=en_US
 LOCALE_CHARSET=UTF-8
 
@@ -10,7 +12,10 @@ LOCALE_CHARSET=UTF-8
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-antlr=/usr/share/antlr --enable-install-devel
+	dh_auto_configure -- \
+		--with-antlr=/usr/share/antlr \
+		--enable-install-devel \
+		--libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)
 
 override_dh_auto_build:
 	mkdir -p $(LOCALE_PATH)
@@ -21,3 +26,6 @@ override_dh_auto_build:
 override_dh_auto_clean:
 	rm -rf debian/tmpdir
 	dh_auto_clean
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
