@@ -1,3 +1,13 @@
+gpt (1.1-3) experimental; urgency=medium
+
+  * Fixed obsolete-url-in-packaging
+  * Use canonical Vcs-fields
+  * Fixed synopsis continued in extended description (Closes: #796133)
+  * Multi-Arch (Closes: #722774)
+  * Fixed space-in-std-shortname-in-dep5-copyright
+
+ -- Marcelo Jorge Vieira <metal@debian.org>  Mon, 31 Jul 2017 01:30:22 -0300
+
 gpt (1.1-2) unstable; urgency=low
 
   * Fixed FTBFS with GCC-4.7 (Closes: #667191); Thanks Gregor Herrmann
