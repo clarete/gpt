@@ -5,8 +5,8 @@ Maintainer: Marcelo Jorge Vieira <metal@debian.org>
 Build-Depends: debhelper (>= 9), autotools-dev, antlr, libantlr-dev, libpcre3-dev, locales
 Standards-Version: 4.0.0
 Homepage: https://github.com/thiago-silva/gpt
-Vcs-Git: git://anonscm.debian.org/users/metal/gpt.git
-Vcs-Browser: https://anonscm.debian.org/cgit/users/metal/gpt.git
+Vcs-Git: https://salsa.debian.org/debian/gpt.git
+Vcs-Browser: https://salsa.debian.org/debian/gpt
 
 Package: gpt
 Architecture: any
