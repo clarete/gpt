@@ -26,6 +26,7 @@ Description: Development files for the G-Portugol library
  G-Portugol is a Portuguese structured programming language, based on the
  popular, freeform, pseudocode known as portugol. The compiler features
  native compilation, translation to C code, and interpretation of algorithms.
+ This package includes the development support files for building applications.
 
 Package: libgportugol0
 Section: libs
@@ -36,3 +37,4 @@ Description: G-Portugol library
  G-Portugol is a Portuguese structured programming language, based on the
  popular, freeform, pseudocode known as portugol. The compiler features
  native compilation, translation to C code, and interpretation of algorithms.
+ This package includes a version of the shared library.

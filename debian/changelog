@@ -8,6 +8,7 @@ gpt (1.1-6) UNRELEASED; urgency=medium
   * Updated copyright format
   * Bump Standards-Version to 4.5.1
   * Fixed no-symbols-control-file
+  * Fixed duplicate-long-description
 
  -- Marcelo Jorge Vieira <metal@debian.org>  Fri, 01 Jan 2021 16:23:29 -0300
 
