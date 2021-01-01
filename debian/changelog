@@ -4,6 +4,7 @@ gpt (1.1-6) UNRELEASED; urgency=medium
   * d/control: Add "Rules-Requires-Root: no"
   * Bump watch file version to 4
   * d/control: Replace 'portuguese' with 'Portuguese'
+  * Set upstream metadata fields
 
  -- Marcelo Jorge Vieira <metal@debian.org>  Fri, 01 Jan 2021 16:23:29 -0300
 
