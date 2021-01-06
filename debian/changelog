@@ -1,3 +1,9 @@
+gpt (1.1-7) unstable; urgency=medium
+
+  * Revert "Fixed no-symbols-control-file"
+
+ -- Marcelo Jorge Vieira <metal@debian.org>  Tue, 05 Jan 2021 22:38:01 -0300
+
 gpt (1.1-6) unstable; urgency=medium
 
   * Bump debhelper from deprecated 9 to 13
