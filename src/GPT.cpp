@@ -21,8 +21,11 @@
 #include "config.h"
 #include "GPT.hpp"
 
+// unlink()
 #ifdef WIN32
-  #include <io.h> //unlink()
+  #include <io.h>
+#else
+  #include <unistd.h>
 #endif
 
 #include <antlr/AST.hpp>
