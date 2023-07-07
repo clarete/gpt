@@ -104,32 +104,6 @@ AC_SUBST(ANTLR_LIB)
 
 
 dnl------------------------------
-dnl checks for PCRE
-dnl------------------------------
-
-# AC_MSG_CHECKING(for pcre)
-
-AC_CHECK_PROG(has_pcre, pcre-config, yes)
-
-if test "x$has_pcre" = "xyes"; then
-  PCRE_CONFIG="pcre-config"
-else
-  AC_MSG_ERROR(
-  [
-    GPT precisa da biblioteca PCRE instalada
-    Baixe em: http://www.pcre.org/
-  ])
-fi
-
-#pcrecpp
-
-PCRE_INC=`${PCRE_CONFIG} --cglags`
-PCRE_LIB="-L`${PCRE_CONFIG} --prefix`/lib -lpcrecpp"
-AC_SUBST(PCRE_INC)
-AC_SUBST(PCRE_LIB)
-
-
-dnl------------------------------
 dnl checks if we want to install
 dnl the libs and headers
 dnl------------------------------
@@ -167,9 +141,6 @@ Sumario:
 	antlr           : $ANTLR_BIN
 	antlr includes  : $ANTLR_INC
 	antr lib        : $ANTLR_LIB
-
-	pcre includes   : $PCRE_INC
-	pcre lib        : $PCRE_LIB
 
 	CXXFLAGS        : $CXXFLAGS
 	MS Windows      : $SO_WINDOWS

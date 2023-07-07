@@ -33,8 +33,6 @@
   #include <netdb.h>
 #endif
 
-#include <pcrecpp.h>
-
 #ifndef WIN32
   void sigPipeHandler(int signum) {
     InterpreterDBG::self()->closeSock();
@@ -399,26 +397,121 @@ int InterpreterDBG::receiveCmd(bool nonBlocking) {
   return ret;
 }
 
-void InterpreterDBG::processBreakpointCMD(string& bpcommand) {
- //cerr << "process breakpoint " << bpcommand << endl;
+struct bpCMDParser {
+  size_t pos;
+  string& bpCMD;
 
   string cmd;
   string file;
   int line;
-  pcrecpp::RE re("breakpoint cmd=(add|remove).*file=\"([^\"]*)\".*line=(\\d+)");
-  if(!re.FullMatch(bpcommand, &cmd, &file, &line)) {
-    //cerr << PACKAGE << ": comando invalido (2): \"" << cmd << "\"" << endl;
+
+  bool isBreakpoint;
+
+  bpCMDParser(string &i) : bpCMD(i) {}
+
+  void parse() {
+    if (!parseName())
+      return;
+    if (!parseCMD())
+      return;
+    if (!parseFile())
+      return;
+    if (!parseLine())
+      return;
+    isBreakpoint = true;
+  }
+
+  bool parseName() {
+    parseSpace();
+    return expectWord("breakpoint");
+  }
+
+  bool parseCMD() {
+    parseSpace();
+    if (!expectWord("cmd"))
+      return false;
+
+    parseSpace();
+    if (!expectWord("="))
+      return false;
+
+    parseSpace();
+    if (expectWord("add")) {
+      cmd = "add";
+      return true;
+    } else if (expectWord("remove")) {
+      cmd = "remove";
+      return true;
+    }
+    return false;
+  }
+
+  bool parseFile() {
+    parseSpace();
+    if (!expectWord("\""))
+      return false;
+
+    size_t start = pos;
+    while (pos < bpCMD.length() && bpCMD[pos] != '"')
+      pos++;
+
+    file = bpCMD.substr(start, pos);
+
+    if (!expectWord("\""))
+      return false;
+    return true;
+  }
+
+  bool parseLine() {
+    parseSpace();
+    if (!expectWord("line"))
+      return false;
+
+    parseSpace();
+    if (!expectWord("="))
+      return false;
+
+    parseSpace();
+
+    size_t start = pos;
+
+    while (pos < bpCMD.length() && isdigit(bpCMD[pos]))
+      pos++;
+
+    line = stoi(bpCMD.substr(start, pos));
+  }
+
+  void parseSpace() {
+    while (pos < bpCMD.length() && bpCMD[pos] == ' ')
+      pos++;
+  }
+
+  bool expectWord(string word) {
+    auto length = word.length();
+    if (bpCMD.compare(pos, pos + length, word)) {
+      pos += length;
+      return true;
+    }
+    return false;
+  }
+};
+
+//
+//    "breakpoint cmd=(add|remove).*file=\"([^\"]*)\".*line=(\\d+)"
+//
+void InterpreterDBG::processBreakpointCMD(string& bpcommand) {
+ //cerr << "process breakpoint " << bpcommand << endl;
+
+  bpCMDParser parser(bpcommand);
+
+  if (!parser.isBreakpoint) {
     return;
   }
 
-  //cerr << PACKAGE << ": capturado:" << cmd << ":" << file << ":" << line << endl;
-
-  if(cmd == "add") {
-    breakpoints[file].push_back(line);
-    //cerr << PACKAGE << ": adding \"" << file << ":" << line << " -- " << cmd << "\"" << endl;
-  } else if(cmd == "remove") {
-    breakpoints[file].remove(line);
-    //cerr << PACKAGE << ": removing \"" << file << ":" << line << " -- " << cmd << "\"" << endl;
+  if (parser.cmd == "add") {
+    breakpoints[parser.file].push_back(parser.line);
+  } else if (parser.cmd == "remove") {
+    breakpoints[parser.file].remove(parser.line);
   } else {
     cerr << PACKAGE << ": breakpoint cmd invalido \"" << bpcommand << "\"" << endl;
     return;
